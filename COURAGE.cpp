@@ -97,6 +97,8 @@ Tree query(int node, int start, int end, int l, int r){
 }
 
 int main(){
+    // ios::sync_with_stdio(false);
+    // cin.tie(0);
     si(n);
     FOR(i, n) si(arr[i]);
     build(1, 0, n-1);

@@ -63,7 +63,10 @@ void build(int node, int start, int end){
 }
 
 Tree query(int node, int start, int end, int l, int r){
+  // cout<<node<<endl;
+  // cout<<start<<' '<<end<<' '<<l<<' '<<r<<endl;
   if(start > end || start > r || end < l){
+    // cout<<"HE"<<endl;
     Tree res;
     res.sum = 0;
     res.maxisum = MINN;
@@ -72,25 +75,37 @@ Tree query(int node, int start, int end, int l, int r){
     return res;
   }
   if(l <= start && end <= r){
+    // cout<<node<<endl;
     return T[node];
   }
   int mid = (start+end)>>1;
   int left = node<<1, right = left+1;
+  // cout<<"KAR"<<endl;
+  // cout<<left<<endl;
   Tree leftRet = query(left, start, mid, l, r);
+  // cout<<leftRet.sum<<' '<<leftRet.maxisum<<' '<<leftRet.maxrsum<<' '<<leftRet.maxlsum<<endl;
   Tree rightRet = query(right, mid+1, end, l, r);
+  // cout<<rightRet.sum<<' '<<rightRet.maxisum<<' '<<rightRet.maxrsum<<' '<<rightRet.maxlsum<<endl;
   Tree ans;
   ans.sum = leftRet.sum+rightRet.sum;
   ans.maxisum = max3(leftRet.maxisum, rightRet.maxisum, leftRet.maxrsum+rightRet.maxlsum);
   ans.maxlsum = max(leftRet.maxlsum, leftRet.sum+rightRet.maxlsum);
   ans.maxrsum = max(rightRet.maxrsum, rightRet.sum+leftRet.maxrsum);
+  // cout<<ans.sum<<' '<<ans.maxisum<<' '<<ans.maxrsum<<' '<<ans.maxlsum<<endl;
+  // cout<<ans.maxisum<<endl;
   return ans; 
 }
 
 
 int main(){
+    // ios::sync_with_stdio(false);
+    // cin.tie(0);
     si(n);
     FOR(i, n) si(arr[i]);
     build(1, 0, n-1);
+    // for(int i = 1;i <= 5; i++){
+    //   cout<<T[i].sum<<' '<<T[i].maxisum<<' '<<T[i].maxlsum<<' '<<T[i].maxrsum<<endl;
+    // }
     int q;
     si(q);
     while(q--){

@@ -22,21 +22,34 @@ template <typename T> T exp(T b, T p){T x = 1;while(p){if(p&1)x=(x*b);b=(b*b);p=
 
 const int MAXN = 2e3+5;
 vector<int> adj[MAXN];
-int gender[MAXN];
+int color[MAXN];
 
-int dfs(int source){
-	int res = 1;
-	for(int i = 0;i < adj[source].size(); i++){
-		int adjacent = adj[source][i];
-		if(gender[adjacent] == gender[source])
-			return 0;
-		if(gender[adjacent] == 0){
-			gender[adjacent] = -gender[source];
-			res = res&dfs(adjacent);
+int checkBipartiteComponent(int source){
+	queue<int> que;
+	que.push(source);
+	// color[source] = 1;
+	while(!que.empty()){
+		int vertex = que.front();
+		// cout<<vertex<<' '<<color[vertex]<<endl;
+		que.pop();
+		for(int i = 0;i  < adj[vertex].size(); i++){
+			int adjacent = adj[vertex][i];
+			// cout<<adjacent<<endl;
+			if(color[adjacent] == 0){
+				if(color[vertex] == 1)
+					color[adjacent] = -1;
+				else
+					color[adjacent] = 1;
+				que.push(adjacent);
+			}
+			else if(color[adjacent] == color[vertex])
+				return 0;
 		}
 	}
-	return res;
+	// cout<<"HELO"<<endl;
+	return 1;
 }
+
 
 int main(){
     int sce;
@@ -46,7 +59,7 @@ int main(){
     	si(n);	
     	int se;
     	si(se);
-    	memset(gender, 0, sizeof(gender));
+    	memset(color, 0, sizeof(color));
     	for(int j = 1; j < MAXN; j++){
     		adj[j].clear();
     	}
@@ -57,11 +70,14 @@ int main(){
     		adj[a].pb(b);
     		adj[b].pb(a);
     	}
+    	// color[1] = 1;
+    	// cout<<checkBipartiteComponent(1)<<endl;
     	int res = 1;
     	for(int j = 1;j <= n; j++){
-    		if(gender[j] == 0){
-    			gender[j] = 1;
-    			res = res&dfs(j);
+    		if(color[j] == 0){
+    			color[j] = 1;	//color[i] = 1 indicates it is red.
+    			// cout<<res<<endl;
+    			res = res & checkBipartiteComponent(j);
     		}
     	}
     	printf("Scenario #%d:\n", i);

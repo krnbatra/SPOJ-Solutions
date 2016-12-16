@@ -4,16 +4,18 @@ import java.util.*;
 class A{
 	 static int[] sieve(int n){
 		int[] primes = new int[n+1];
+		//initially i am going to assume all numbers are prime.
 		for(int i = 0;i < primes.length; i++){
 			primes[i] = 0;
 		}
 		primes[0] = 1;
 		primes[1] = 1;
-		for(int i = 2; i <= n; i++){		
+		//if primes[i] is 0 it denotes the number is prime else composite.
+		for(int i = 2; i <= n; i++){		//for optimised version use i*i <= n.. then the time complexity will be O(sqrt(n)log(logn))
 			if(primes[i]==0){
 				primes[i] = i;
-				if((i*(long)1*i) <= n){			
-					for(int k = 2*i;k <= n; k+=i){	
+				if((i*(long)1*i) <= n){			//checking whether i*i has not exceeded n.
+					for(int k = 2*i;k <= n; k+=i){	//remember although starting from i*i will be faster but it can result in overflow if the value of max_prime is large start from 2*i not i*i. 
 						if(primes[k]==0)
 							primes[k] = i;
 					}

@@ -42,6 +42,7 @@ int isValid(int i, int j){
 }
 void dfs(int i, int j, int count1){
 	// cout<<i<<' '<<j<<' '<<count1<<endl;
+	// ans = max(ans, count1);
 	if(count1 > ans){
 		ans = count1;
 		newX = i;
@@ -67,6 +68,8 @@ int main(){
     int t;
     si(t);
     while(t--){
+    	// count1 = 0;
+    	// int c, r;
     	ans = INT_MIN;
     	int flag = 0;
     	newX = -1;
@@ -78,17 +81,23 @@ int main(){
     			cin>>matrix[i][j];
     		}
     	}
+    	// int ans = INT_MIN;
     	for(int i = 0;i < r; i++){
+    		// cout<<"HI"<<endl;
     		for(int j = 0;j < c; j++){
     			if(matrix[i][j] == '.'){
+    				// memset(visited, 0, sizeof(visited));
     				dfs(i, j, 0);
     				flag = 1;
     				break;
+    				// ans = max(ans, count1-1);
+    				// count1 = 0;
     			}
     			if(flag)
     				break;
     		}
     	}
+    	// cout<<newX<<' '<<newY<<endl;
     	memset(visited, 0, sizeof(visited));
     	ans = INT_MIN;
     	dfs(newX, newY, 0);

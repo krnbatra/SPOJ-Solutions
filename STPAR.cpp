@@ -45,14 +45,17 @@ int main(){
     	int i = 0;
     	while(i < n){
     		if(arr[i] == toFound){
+    			// cout<<"HELLO"<<endl;
     			toFound++;
     			i++;
     		}
     		else if(!stk.empty() && stk.top() == toFound){
+    			// cout<<"karan"<<endl;
     			stk.pop();
     			toFound++;
     		}
     		else{
+    			// cout<<"batra"<<endl;
     			stk.push(arr[i]);
     			i++;
     		}

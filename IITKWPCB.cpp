@@ -24,6 +24,7 @@ int main(){
     scanf("%d", &t);
     while(t--){
         ll n;
+        // cin>>n>>u;
         scanf("%lld", &n);
         for(ll i = n/2; i>=1; i--){
             if(gcd(i, n)==(ll)1){

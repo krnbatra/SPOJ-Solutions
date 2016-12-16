@@ -91,6 +91,8 @@ ll query(int node, int start, int end, int l, int r){
 }
 
 int main(){
+    // ios::sync_with_stdio(false);
+    // cin.tie(0);
     int t;
     si(t);
     while(t--){

@@ -1,1 +1,0 @@
-# SPOJ-Solutions

@@ -52,6 +52,7 @@ int main(){
     precal();
     for(int i = 1; i < 1000001; i++){
     	if(numFactors[i] <= 10){
+    		// cout<<"HE"<<endl;
     		arr[numFactors[i]].pb(i);
     	}
     }
@@ -67,6 +68,7 @@ int main(){
     	int end = upper_bound(arr[n].begin(), arr[n].end(), b)-arr[n].begin();
     	res = end-begin;
     	pi(res);
+    	// cout<<"karan"<<endl;
     }
     return 0;
 }

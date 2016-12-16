@@ -54,14 +54,19 @@ int main(){
     int t;
     si(t);
     while(t--){
+    	// int n;
     	si(n);
+    	// cout<<n<<endl;
+    	// int height[n];
     	FOR(i, n)	cin>>height[i];
+    	// int cost[n];
     	FOR(i, n)	cin>>cost[i];
     	ll minn = LONG_MAX, maxx = LONG_MIN;
     	for(int i = 0;i < n; i++){
     		minn = min(minn, height[i]);
     		maxx = max(maxx, height[i]);
     	}
+    	// cout<<minn<<' '<<maxx<<endl;
     	ll lo = minn-1, hi = maxx;
     	while(hi-lo > 1){
     		ll mid = (hi+lo)/2;

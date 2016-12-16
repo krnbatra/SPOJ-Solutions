@@ -1,49 +1,32 @@
 import java.io.*;
 import java.util.*;
-import java.math.BigInteger;
-import java.util.ArrayList;
 
 class A{
-	static ArrayList<Integer> sieve(int n){
-		char[] primes = new char[n+1];
-		ArrayList<Integer> prime = new ArrayList<>();
-		for(int i = 0;i < primes.length; i++){
-			primes[i] = 0;
-		}
-		primes[0] = 1;
-		primes[1] = 1;
-		for(int i = 2; i <= n; i++){		
-			if(primes[i]==0){
-				for(int k = 2*i;k <= n; k+=i){	
-					primes[k]++;
-				}
-			}
-		}
-		for(int i = 2; i <= n; i++){		
-			if(primes[i]>=3){
-				prime.add(i);
-			}
-		}
-		return prime;
-	}
 	public static void main(String[] args) {
 		final InputReader in = new InputReader(System.in);
 		final OutputWriter out = new OutputWriter(System.out);
-		ArrayList<Integer> primes = sieve(1000000);
-		SolveA sol = new SolveA();
-		int t = in.readInt();
-		while(t-- > 0){
-			sol.solve(in, out, primes);
-		}
+		Solver sol = new Solver();
+//		int t = in.readInt();
+//		while(t-- > 0){
+			sol.solve(in, out);
+//		}
 		out.flush();
 		out.close();
 	}
 }
-class SolveA{
-
-	void solve(InputReader in, OutputWriter out, ArrayList<Integer> primes){
-		int n = in.readInt();
-		out.printLine(primes.get(n-1));
+class Solver{
+	
+	void solve(InputReader in, OutputWriter out){
+		final int n = in.readInt();
+		long fact = (long)1;
+		String input = "109546051211";
+		long mod = Long.parseLong(input);
+		long pro = (long)1;
+		for(int i = 2;i <= n; i++){
+			fact = (fact *i) % mod;
+			pro = ((pro)* (fact))%mod;
+		}
+		out.printLine(pro);
 	}
 }
 class InputReader{
