@@ -10,8 +10,8 @@ typedef vector<int> vi;
 #define MOD (ll)1000000007
 #define pb   push_back
 #define EPS 1e-9
-#define FOR(i, n)  for(int i = 0;i < n; i++)
-#define FORE(i, a, b)   for(int i = a;i <= b; i++)
+#define FOR(i,n)  for(int i = 0;i < n; i++)
+#define FORE(i,a,b) for(int i = a;i <= b; i++)
 #define pi(a)   printf("%d\n", a)
 #define all(c)  c.begin(), c.end()
 #define tr(container, it)   for(typeof(container.begin()) it = container.begin(); it != container.end(); it++)
@@ -19,6 +19,11 @@ typedef vector<int> vi;
 #define sdi(a, b)   si(a);si(b)
 #define io ios_base::sync_with_stdio(false);cin.tie(NULL);
 #define endl '\n'
+#define F first
+#define S second
+#define FILL(arr, val)  memset(arr, val, sizeof(arr))
+#define read(arr, n)    for(int i = 0;i < n; i++)cin>>arr[i];
+#define sp ' '
 
 template <typename T> T gcd(T a, T b){return (b==0)?a:gcd(b,a%b);}
 template <typename T> T lcm(T a, T b){return a*(b/gcd(a,b));}
@@ -36,38 +41,42 @@ void si(int &x){
     if(neg) x=-x;
 }
 
-vector<int> factors;
-void div(int n){
-    for(int i = 1;i*i <= n; i++){
-        // cout<<i<<endl;
-        if(n%i == 0){
-            if(i*i == n){
-                factors.pb(i);
-            }else{
-                factors.pb(i);
-                factors.pb(n/i);
-            }
-        }
+const int MAXN = 10005;
+vector<int> adj[MAXN];
+bool vis[MAXN];
+
+void dfs(int source){
+    vis[source] = 1;
+    for(int i = 0;i < adj[source].size(); i++){
+        if(!vis[adj[source][i]])
+            dfs(adj[source][i]);
     }
 }
 
 int main(){
-    // io;
-    int t;
-    si(t);
-    while(t--){
-        factors.clear();
+    io;
+    int nodes, edges;
+    cin >> nodes >> edges;
+    for(int i = 0;i < nodes; i++){
         int a, b;
-        sdi(a,b);
-        if(a > b)   swap(a,b);
-        int gd = gcd(a,b);
-        div(gd);
-        int count = factors.size();
-        // FOR(i, factors.size()){
-        //     if(b%factors[i]==0)
-        //         count++;
-        // }
-        pi(count);
+        cin >> a >> b;
+        adj[a].pb(b);
+        adj[b].pb(a);
+    }
+    if(edges != nodes-1){
+        cout << "NO" << endl;
+    }else{
+        int cc = 0;
+        for(int i = 1;i <= nodes; i++){
+            if(!vis[i]){
+                dfs(i);
+                cc++;
+            }
+        }
+        if(cc > 1)
+            cout << "NO" << endl;
+        else
+            cout << "YES" << endl;
     }
     return 0;
 }

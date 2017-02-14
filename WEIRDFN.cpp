@@ -48,56 +48,40 @@ int main(){
     int t;
     cin >> t;
     while(t--){
-    	ll a, b, c, n;
-    	cin >> a >> b >> c >> n;
-    	priority_queue<int, vi, less<int> > lowers;
-    	priority_queue<int, vi, greater<int> > uppers;
-    	lowers.push(1);
-    	ll f = 1;
-    	ll sum = 1;
-    	int fsize = 1;
-    	int ssize = 0;
-    	for(int i = 2;i <= n; i++){
-  			ll m = lowers.top();
-    		f = a*m + b*i + c;
-    		if(f >= MOD)
-    			f %= MOD;	
-    		sum += f;
-    		if(ssize < fsize){
-    			if(f < lowers.top()){
-    				int ele = lowers.top();
-    				lowers.pop();
-    				uppers.push(ele);
-    				lowers.push(f);
-    			}else{
-    				uppers.push(f);
-    			}
-    			ssize++;
-    		}else{
-    			if(f > uppers.top()){
-    				lowers.push(uppers.top());
-    				uppers.pop();
-    				uppers.push(f);
-    			}else{
-    				lowers.push(f);
-    			}
-    			fsize++;
-    		}
-    		// if(f < lowers.top()){
-    		// 	lowers.push(f);
-    		// }else{
-    		// 	uppers.push(f);
-    		// }
-    		// if(lowers.size()-uppers.size() >= 2){
-    		// 	uppers.push(lowers.top());
-    		// 	lowers.pop();
-    		// }
-    		// if(uppers.size()-lowers.size() >= 2){
-    		// 	lowers.push(uppers.top());
-    		// 	uppers.pop();
-    		// }
-    	}
-    	cout << sum << endl;
+        ll a, b, c, n;
+        cin >> a >> b >> c >> n;
+        priority_queue<int, vi, less<int> > lowers;
+        priority_queue<int, vi, greater<int> > uppers;
+        lowers.push(1);
+        ll f = 1;
+        ll sum = 1;
+        for(int i = 2;i <= n; i++){
+            ll m = lowers.top();
+            f = a*m + b*i + c;
+            if(f >= MOD)
+                f %= MOD;   
+            sum += f;
+            //rebalancing
+            if(uppers.size() < lowers.size()){
+                if(f < lowers.top()){
+                    //f should come in lowers but i have to rebalance
+                    lowers.push(f);
+                    uppers.push(lowers.top());
+                    lowers.pop();
+                }else{
+                    uppers.push(f);
+                }
+            }else{
+                if(f > uppers.top()){
+                    uppers.push(f);
+                    lowers.push(uppers.top());
+                    uppers.pop();
+                }else{
+                    lowers.push(f);
+                }
+            }
+        }
+        cout << sum << endl;
     }
     return 0;
 }

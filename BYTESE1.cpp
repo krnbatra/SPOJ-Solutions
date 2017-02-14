@@ -41,68 +41,76 @@ void si(int &x){
     if(neg) x=-x;
 }
 
-int r, c;
-char matrix[105][105];
-bool visited[105][105];
-string input = "ALLIZZWELL"; 
-
-int dx[8] = {-1, -1, -1, 0, 0, 1, 1, 1};
-int dy[8] = {-1, 0, 1, -1, 1, -1, 0, 1};
+const int MAXN = 105;
+int matrix[MAXN][MAXN];
+int w, h;
+int vis[MAXN][MAXN];
+int dx[4] = {0, -1, 0, 1};
+int dy[4] = {-1, 0, 1, 0};
+int destX, destY;
 
 bool isValid(int x, int y){
-    return (x >= 0 && x < r && y >= 0 && y < c);
-}
-int ans = 0;
-void solve(int x, int y, int len){
-    
-    if(len == 10){
-        ans = 1;
-        return;
-    }
-    // cout << x << ' ' << y << sp << input[len] << endl;
-    char toSearch = input[len];
-    for(int i = 0;i < 8; i++){
-            int tempX = x+dx[i];
-            int tempY = y+dy[i];
-            if(isValid(tempX,tempY) && !visited[tempX][tempY] && matrix[tempX][tempY] == toSearch){
-                visited[tempX][tempY] = 1;
-                solve(tempX, tempY, len+1);
-                visited[tempX][tempY] = 0;
-            }
-    }
+    return (x >= 0 && x < h && y >= 0 && y < w);
 }
 
+void bfs(int x, int y){
+    queue<ii> Q;
+    Q.push({x, y});
+    vis[x][y] = matrix[x][y];
+    while(!Q.empty()){
+        ii P = Q.front();
+        Q.pop();
+        int x = P.F;
+        int y = P.S;
+        // cout << x << sp << y << sp << vis[x][y] << endl;
+        for(int i = 0;i < 4; i++){
+            int tempX = x+dx[i];
+            int tempY = y+dy[i];
+            
+            if(!isValid(tempX, tempY)){
+                continue;
+            }
+
+            if(tempX == destX && tempY == destY){
+                vis[tempX][tempY] = min(vis[tempX][tempY], vis[x][y]+matrix[tempX][tempY]);
+                continue;
+            }
+            // cout << tempX << sp << tempY << endl;
+            if(vis[tempX][tempY] > vis[x][y]+matrix[tempX][tempY])
+                vis[tempX][tempY] = vis[x][y] + matrix[tempX][tempY];
+            else
+                continue;
+
+            Q.push({tempX, tempY});
+        }
+    }
+}
 
 int main(){
     io;
     int t;
     cin >> t;
     while(t--){
-        cin >> r >> c;
-        FOR(i,r){
-            FOR(j,c){
+        cin >> h >> w;    
+        // FOR(i,MAXN){
+        //     FOR(j, MAXN){
+        //         vis[i][j] = 1000;
+        //     }
+        // }
+        FOR(i, h){
+            FOR(j, w){
                 cin >> matrix[i][j];
+                vis[i][j] = 1000;
             }
         }
-        int flag = 1;
-        ans = 0;
-        FOR(i,r){
-            FOR(j,c){
-                if(matrix[i][j] == 'A'){
-                    FILL(visited, 0);
-                    visited[i][j] = 1;
-                    solve(i,j,1);
-                    if(ans){
-                        cout << "YES" << endl;
-                        flag = 0;
-                        break;
-                    }
-                }
-            }
-            if(flag == 0)
-                break;
-        }
-        if(flag)
+        int time;
+        cin >> destX >> destY >> time;
+        destX--;destY--;
+        bfs(0, 0);
+        if(vis[destX][destY] <= time){
+            cout << "YES" << endl;
+            cout << time-vis[destX][destY] << endl;
+        }else
             cout << "NO" << endl;
     }
     return 0;

@@ -40,45 +40,65 @@ void si(int &x){
     for(;c>47 && c<58;c = gc()) {x = (x<<1) + (x<<3) + c - 48;}
     if(neg) x=-x;
 }
-const int MAXN = 1e5+5;
-int n, c;
-int pos[MAXN];
 
-int isPossible(int mid){
-    //place each cow at gap of mid and see if all cows can be placed
-    //i will go till n and if the number of cows on reaching n is found to be greater than or equal to c then this is possible answer
-    int positionOfLastCow = pos[0];
-    int count = 1;
-    for(int i = 1;i < n; i++){
-        int currentPositionOfCow = pos[i];
-        if(currentPositionOfCow-positionOfLastCow >= mid){
-            count++;
-            positionOfLastCow = currentPositionOfCow;
+const int MAXN = 1e2+5;
+vector<int> topo;
+bool vis[MAXN];
+int in_degree[MAXN];    //in_degree[i] denotes the number of vertices that are still not added to topo and there is an edge from them to i.
+int n;
+vector<int> adj[MAXN];
+
+void topoSort(){
+    for(int i = 1;i <= n; i++){
+        for(int j = 0;j < adj[i].size(); j++){
+            in_degree[adj[i][j]]++;
         }
     }
-    if(count >= c)
-        return 1;
-    else
-        return 0;
+    set<int> S;  
+    for(int i = 1;i <= n; i++){
+        if(in_degree[i] == 0){
+            S.insert(i);
+            vis[i] = true;
+        }
+    }
+    // cout << Q.front() << endl;
+    while(!S.empty()){
+        int curr = *(S.begin());
+        S.erase(S.begin());
+        // Q.pop();
+        topo.pb(curr);
+        for(int j = 0;j < adj[curr].size(); j++){
+            if(!vis[adj[curr][j]]){
+                in_degree[adj[curr][j]]--;
+                if(in_degree[adj[curr][j]] == 0){
+                    S.insert(adj[curr][j]);
+                    vis[adj[curr][j]] = 1;
+                }
+            }
+        }
+    }
 }
+
 
 int main(){
     io;
-    int t;
-    cin >> t;
-    while(t--){
-        cin >> n >> c;
-        read(pos, n);
-        sort(pos, pos+n);
-        int minn = 0, maxx = pos[n-1]-pos[0]+1;
-        while(maxx - minn > 1){
-            int mid = (maxx+minn)/2;
-            if(isPossible(mid)){
-                minn = mid;
-            }else
-                maxx = mid;
+    cin >> n;
+    int m;
+    cin >> m;
+    for(int i = 1;i <= m; i++){
+        int a;
+        cin >> a;
+        int num;
+        cin >> num;
+        for(int j = 0;j < num; j++){
+            int b;
+            cin >> b;
+            adj[b].pb(a);
         }
-        cout << minn << endl;
     }
+    topoSort();
+    for(int i = 0;i < topo.size(); i++)
+        cout << topo[i] << sp;
+    cout << endl;
     return 0;
 }

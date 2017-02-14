@@ -40,45 +40,88 @@ void si(int &x){
     for(;c>47 && c<58;c = gc()) {x = (x<<1) + (x<<3) + c - 48;}
     if(neg) x=-x;
 }
-const int MAXN = 1e5+5;
-int n, c;
-int pos[MAXN];
 
-int isPossible(int mid){
-    //place each cow at gap of mid and see if all cows can be placed
-    //i will go till n and if the number of cows on reaching n is found to be greater than or equal to c then this is possible answer
-    int positionOfLastCow = pos[0];
-    int count = 1;
-    for(int i = 1;i < n; i++){
-        int currentPositionOfCow = pos[i];
-        if(currentPositionOfCow-positionOfLastCow >= mid){
-            count++;
-            positionOfLastCow = currentPositionOfCow;
+const int MAXN = 1e5+5;
+vector<int> adj[MAXN];
+vector<int> adjReverse[MAXN];
+int n;
+bool vis[MAXN];
+stack<int> stk;
+vector<int> components[MAXN];
+int number;
+int ans[MAXN];
+
+void dfs(int src){
+    vis[src] = 1;
+    FOR(i, adj[src].size()){
+        if(!vis[adj[src][i]]){
+            dfs(adj[src][i]);
         }
     }
-    if(count >= c)
-        return 1;
-    else
-        return 0;
+    stk.push(src);
+}
+
+void dfsF(int src){
+    vis[src] = 1;
+    components[number].pb(src);
+    FOR(i, adjReverse[src].size()){
+        if(!vis[adjReverse[src][i]]){
+            dfsF(adjReverse[src][i]);
+        }
+    }
+}
+
+void reverse(){
+    for(int i = 0;i < n; i++){
+        int st = i;
+        for(int j = 0;j < adj[i].size(); j++){
+            int to = adj[i][j];
+            adjReverse[to].pb(st);
+        }
+    }
+}
+
+void scc(){
+    while(!stk.empty()){
+        int ele = stk.top();
+        stk.pop();
+        if(!vis[ele]){
+            dfsF(ele);
+            number++;
+        }
+    }
 }
 
 int main(){
     io;
-    int t;
-    cin >> t;
-    while(t--){
-        cin >> n >> c;
-        read(pos, n);
-        sort(pos, pos+n);
-        int minn = 0, maxx = pos[n-1]-pos[0]+1;
-        while(maxx - minn > 1){
-            int mid = (maxx+minn)/2;
-            if(isPossible(mid)){
-                minn = mid;
-            }else
-                maxx = mid;
+    cin >> n;
+    int m;
+    cin >> m;
+    for(int i = 0;i < m; i++){
+        int a, b;
+        cin >> a >> b;
+        adj[a].pb(b);
+    }
+    for(int i = 0;i < n; i++){
+        if(!vis[i]){
+            dfs(i);
         }
-        cout << minn << endl;
+    }
+    FOR(i,n) vis[i] = false;
+    reverse();
+    scc();
+    FOR(i,number){
+        //find min in components[i];
+        int minn = INT_MAX;
+        for(int j = 0;j < components[i].size(); j++){
+            minn = min(minn, components[i][j]);
+        }
+        for(int j = 0;j < components[i].size(); j++){
+            ans[components[i][j]] = minn;
+        }
+    }
+    FOR(i,n){
+        cout << ans[i] << endl;
     }
     return 0;
 }

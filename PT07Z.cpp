@@ -8,13 +8,22 @@ typedef vector<ii> vii;
 typedef vector<int> vi;
  
 #define MOD (ll)1000000007
-#define pb 	push_back
+#define pb   push_back
 #define EPS 1e-9
-#define FOR(i, n)	for(int i = 0;i < n; i++)
+#define FOR(i,n)  for(int i = 0;i < n; i++)
+#define FORE(i,a,b) for(int i = a;i <= b; i++)
 #define pi(a)   printf("%d\n", a)
 #define all(c)  c.begin(), c.end()
 #define tr(container, it)   for(typeof(container.begin()) it = container.begin(); it != container.end(); it++)
 #define gc getchar_unlocked
+#define sdi(a, b)   si(a);si(b)
+#define io ios_base::sync_with_stdio(false);cin.tie(NULL);
+#define endl '\n'
+#define F first
+#define S second
+#define FILL(arr, val)  memset(arr, val, sizeof(arr))
+#define read(arr, n)    for(int i = 0;i < n; i++)cin>>arr[i];
+#define sp ' '
 
 template <typename T> T gcd(T a, T b){return (b==0)?a:gcd(b,a%b);}
 template <typename T> T lcm(T a, T b){return a*(b/gcd(a,b));}
@@ -31,42 +40,41 @@ void si(int &x){
     for(;c>47 && c<58;c = gc()) {x = (x<<1) + (x<<3) + c - 48;}
     if(neg) x=-x;
 }
-const int MAXN = 1e5+5;
+
+const int MAXN = 10005;
 vector<int> adj[MAXN];
-int visited[MAXN];
-int dest;
-int ans = INT_MIN;
-void dfs(int source, int count){
-	// cout<<source<<' '<<count<<endl;
-	if(count > ans){
-		ans = count;
-		dest = source;
-	}
-	visited[source] = 1;
-	for(int i = 0;i < adj[source].size(); i++){
-		if(!visited[adj[source][i]]){
-			dfs(adj[source][i], count+1);
-		}
-	}
+bool vis[MAXN];
+int currentMax;
+int vertofound;
+
+
+void dfs(int source, int maxlen){
+    vis[source] = 1;
+    if(maxlen > currentMax){
+        currentMax = maxlen;
+        vertofound = source;
+    }
+    for(int i = 0;i < adj[source].size(); i++){
+        if(!vis[adj[source][i]])
+            dfs(adj[source][i], maxlen+1);
+    }
 }
 
-
 int main(){
-    int n;
-    si(n);
-    for(int i = 1;i <= n-1; i++){
-    	int a, b;
-    	si(a);
-    	si(b);
-    	adj[a].pb(b);
-    	adj[b].pb(a);
-    	
+    io;
+    currentMax = INT_MIN;
+    int nodes;
+    cin >> nodes;
+    for(int i = 1;i <= nodes-1; i++){
+        int a, b;
+        cin >> a >> b;
+        adj[a].pb(b);
+        adj[b].pb(a);
     }
     dfs(1, 0);
-    memset(visited, 0, sizeof(visited));
-    // cout<<ans<<endl;
-    ans = INT_MIN;
-    dfs(dest, 0);
-    pi(ans);
+    for(int i = 0;i <= nodes; i++)
+        vis[i] = 0;
+    dfs(vertofound, 0);
+    cout << currentMax << endl;
     return 0;
 }

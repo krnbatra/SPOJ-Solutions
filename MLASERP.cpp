@@ -40,45 +40,69 @@ void si(int &x){
     for(;c>47 && c<58;c = gc()) {x = (x<<1) + (x<<3) + c - 48;}
     if(neg) x=-x;
 }
-const int MAXN = 1e5+5;
-int n, c;
-int pos[MAXN];
 
-int isPossible(int mid){
-    //place each cow at gap of mid and see if all cows can be placed
-    //i will go till n and if the number of cows on reaching n is found to be greater than or equal to c then this is possible answer
-    int positionOfLastCow = pos[0];
-    int count = 1;
-    for(int i = 1;i < n; i++){
-        int currentPositionOfCow = pos[i];
-        if(currentPositionOfCow-positionOfLastCow >= mid){
-            count++;
-            positionOfLastCow = currentPositionOfCow;
-        }
-    }
-    if(count >= c)
-        return 1;
-    else
-        return 0;
+const int MAXN = 105;
+char matrix[MAXN][MAXN];
+bool vis[MAXN][MAXN];
+int dx[4] = {0, -1, 0, 1};
+int dy[4] = {-1, 0, 1, 0};
+int sr, sc, er, ec, r, c;
+int d[MAXN][MAXN];
+
+// 0 means left, 1 means up, 2 means right, 3 means down
+
+
+bool isValid(int x, int y){
+    return (x >= 0 && x < r && y >= 0 && y < c);
+}
+
+int bfs(){
+	int r1, c1, r2, c2, dir;
+	queue<int> Q;
+	memset(d, 0x3f, sizeof d);
+	d[sr][sc] = -1;
+	Q.push(sr); Q.push(sc);
+	while(!Q.empty()){
+		r1 = Q.front(); Q.pop();
+		c1 = Q.front(); Q.pop();
+		for(int i = 0;i < 4; i++){
+			r2 = r1 + dx[i];
+			c2 = c1 + dy[i];
+			while(isValid(r2, c2) && matrix[r2][c2] != '*'){
+				if(d[r2][c2] > d[r1][c1] + 1){
+					d[r2][c2] = d[r1][c1] + 1;
+					if(r2 == er && c2 == ec)	return d[r2][c2];
+					Q.push(r2); Q.push(c2);
+				}
+				r2 += dx[i];
+				c2 += dy[i];
+			}
+ 		}
+	}
+	return d[er][ec];
 }
 
 int main(){
     io;
-    int t;
-    cin >> t;
-    while(t--){
-        cin >> n >> c;
-        read(pos, n);
-        sort(pos, pos+n);
-        int minn = 0, maxx = pos[n-1]-pos[0]+1;
-        while(maxx - minn > 1){
-            int mid = (maxx+minn)/2;
-            if(isPossible(mid)){
-                minn = mid;
-            }else
-                maxx = mid;
+    cin >> c >> r;
+    FOR(i,r){
+        FOR(j,c){
+            cin >> matrix[i][j];
         }
-        cout << minn << endl;
+    }                                                              
+    int cnt = 0;
+    for(int i = 0;i < r; i++){
+        for(int j = 0;j < c; j++){
+            if(matrix[i][j] == 'C'){
+                if(cnt == 0){
+                	sr = i;sc = j;cnt++;
+                }else{
+                	er = i;ec = j;cnt++;
+                }
+            }
+        }
     }
+    // cout << sr << sp << sc << sp << er << sp << ec << endl;
+    cout << bfs() << endl;
     return 0;
 }

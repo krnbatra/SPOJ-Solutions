@@ -10,8 +10,8 @@ typedef vector<int> vi;
 #define MOD (ll)1000000007
 #define pb   push_back
 #define EPS 1e-9
-#define FOR(i, n)  for(int i = 0;i < n; i++)
-#define FORE(i, a, b)   for(int i = a;i <= b; i++)
+#define FOR(i,n)  for(int i = 0;i < n; i++)
+#define FORE(i,a,b) for(int i = a;i <= b; i++)
 #define pi(a)   printf("%d\n", a)
 #define all(c)  c.begin(), c.end()
 #define tr(container, it)   for(typeof(container.begin()) it = container.begin(); it != container.end(); it++)
@@ -36,38 +36,46 @@ void si(int &x){
     if(neg) x=-x;
 }
 
-vector<int> factors;
-void div(int n){
-    for(int i = 1;i*i <= n; i++){
-        // cout<<i<<endl;
-        if(n%i == 0){
-            if(i*i == n){
-                factors.pb(i);
-            }else{
-                factors.pb(i);
-                factors.pb(n/i);
-            }
-        }
-    }
+const int MAXN = 65;
+int isPrime[MAXN];	//isPrime[i] = 0 indicates i is prime. 
+void sieve(){
+	//if even check itself while calling. This function will only tells wether a number is prime or not(not for even numbers).
+	isPrime[0] = isPrime[1] = 1;
+	for(int i = 3; i*i <= MAXN; i+=2){
+		if(isPrime[i] == 0){
+			if(i*(ll)1*i <= MAXN){
+				for(int j = i*i; j <= MAXN; j += (2*i)){
+					isPrime[j] = 1;
+				}
+			}
+		}
+	}
 }
 
+
+
 int main(){
-    // io;
-    int t;
-    si(t);
-    while(t--){
-        factors.clear();
-        int a, b;
-        sdi(a,b);
-        if(a > b)   swap(a,b);
-        int gd = gcd(a,b);
-        div(gd);
-        int count = factors.size();
-        // FOR(i, factors.size()){
-        //     if(b%factors[i]==0)
-        //         count++;
-        // }
-        pi(count);
-    }
+    io;
+    sieve();
+	int t;
+	cin >> t;
+	while(t--){
+		double a, b;
+		cin >> a >> b;
+		int count = 0;
+		int bitsA = ((double)log2(a) + 1);
+		int bitsB = ((double)log2(b) + 1);
+		for(int i = bitsA; i < bitsB; i++){
+			if(!isPrime[i]){
+				count++;
+			}
+		}
+		//if b+1 is power of two and bitsB is prime then count+1
+		ll rem = b+1;
+		if(!(rem&(rem-1)) && !isPrime[bitsB]){
+			count++;
+		}
+		cout << count << endl;
+	}    
     return 0;
 }

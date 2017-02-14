@@ -10,8 +10,8 @@ typedef vector<int> vi;
 #define MOD (ll)1000000007
 #define pb   push_back
 #define EPS 1e-9
-#define FOR(i, n)  for(int i = 0;i < n; i++)
-#define FORE(i, a, b)   for(int i = a;i <= b; i++)
+#define FOR(i,n)  for(int i = 0;i < n; i++)
+#define FORE(i,a,b) for(int i = a;i <= b; i++)
 #define pi(a)   printf("%d\n", a)
 #define all(c)  c.begin(), c.end()
 #define tr(container, it)   for(typeof(container.begin()) it = container.begin(); it != container.end(); it++)
@@ -19,6 +19,11 @@ typedef vector<int> vi;
 #define sdi(a, b)   si(a);si(b)
 #define io ios_base::sync_with_stdio(false);cin.tie(NULL);
 #define endl '\n'
+#define F first
+#define S second
+#define FILL(arr, val)  memset(arr, val, sizeof(arr))
+#define read(arr, n)    for(int i = 0;i < n; i++)cin>>arr[i];
+#define sp ' '
 
 template <typename T> T gcd(T a, T b){return (b==0)?a:gcd(b,a%b);}
 template <typename T> T lcm(T a, T b){return a*(b/gcd(a,b));}
@@ -36,38 +41,39 @@ void si(int &x){
     if(neg) x=-x;
 }
 
-vector<int> factors;
-void div(int n){
-    for(int i = 1;i*i <= n; i++){
-        // cout<<i<<endl;
-        if(n%i == 0){
-            if(i*i == n){
-                factors.pb(i);
-            }else{
-                factors.pb(i);
-                factors.pb(n/i);
-            }
-        }
-    }
-}
 
 int main(){
-    // io;
-    int t;
-    si(t);
-    while(t--){
-        factors.clear();
-        int a, b;
-        sdi(a,b);
-        if(a > b)   swap(a,b);
-        int gd = gcd(a,b);
-        div(gd);
-        int count = factors.size();
-        // FOR(i, factors.size()){
-        //     if(b%factors[i]==0)
-        //         count++;
-        // }
-        pi(count);
+    io;
+    int kase = 1;
+    while(1){
+        int n;
+        cin >> n;
+        if(n == 0)
+            break;
+        ll sum = 0;
+        int matrix[n][n];
+        FOR(i,n){
+            FOR(j,n){
+                cin >> matrix[i][j];
+                sum += matrix[i][j];
+            }
+        }
+        ll ans = 0;
+        FOR(i,n){
+            int loss = 0;
+            int gain = 0;
+            FOR(j,n){
+                loss += matrix[i][j];
+            }
+            FOR(j,n){
+                gain += matrix[j][i];
+            }
+            int net = gain-loss;
+            if(net > 0)
+                ans += net;
+        }
+        cout << kase << ". " << sum << sp << ans << endl;
+        kase++;
     }
     return 0;
 }

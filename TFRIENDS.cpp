@@ -41,69 +41,81 @@ void si(int &x){
     if(neg) x=-x;
 }
 
-int r, c;
-char matrix[105][105];
-bool visited[105][105];
-string input = "ALLIZZWELL"; 
+const int MAXN = 1e2+5;
+vector<int> adj[MAXN], adjReverse[MAXN];
+int components[MAXN];   //components[i] indicates to which component i belongs to.
+int in_degree[MAXN];
+int n;
+bool vis[MAXN];
+stack<int> stk;
+int numberOfComponents;
 
-int dx[8] = {-1, -1, -1, 0, 0, 1, 1, 1};
-int dy[8] = {-1, 0, 1, -1, 1, -1, 0, 1};
-
-bool isValid(int x, int y){
-    return (x >= 0 && x < r && y >= 0 && y < c);
-}
-int ans = 0;
-void solve(int x, int y, int len){
-    
-    if(len == 10){
-        ans = 1;
-        return;
-    }
-    // cout << x << ' ' << y << sp << input[len] << endl;
-    char toSearch = input[len];
-    for(int i = 0;i < 8; i++){
-            int tempX = x+dx[i];
-            int tempY = y+dy[i];
-            if(isValid(tempX,tempY) && !visited[tempX][tempY] && matrix[tempX][tempY] == toSearch){
-                visited[tempX][tempY] = 1;
-                solve(tempX, tempY, len+1);
-                visited[tempX][tempY] = 0;
-            }
-    }
+void initialize(){
+    FORE(i,1,n){vis[i] = false;adj[i].clear();adjReverse[i].clear();in_degree[i]=0;components[i]=0;numberOfComponents=0;}
 }
 
+void dfs(int src){
+    vis[src] = 1;
+    FOR(i, adj[src].size()){
+        if(!vis[adj[src][i]]){
+            dfs(adj[src][i]);
+        }
+    }
+    //ordering the vertices according to the finish times, the vertex finishing last will be at the top of stack.
+    stk.push(src);
+}
+
+void dfsF(int src){
+    vis[src] = 1;
+    components[src] = numberOfComponents;
+    FOR(i, adjReverse[src].size()){
+        if(!vis[adjReverse[src][i]]){
+            dfsF(adjReverse[src][i]);
+        }
+    }
+}
+
+void scc(){
+    while(!stk.empty()){
+        int ele = stk.top();
+        stk.pop();
+        if(!vis[ele]){
+            numberOfComponents++;
+            dfsF(ele);
+        }
+    }
+}
 
 int main(){
     io;
     int t;
     cin >> t;
     while(t--){
-        cin >> r >> c;
-        FOR(i,r){
-            FOR(j,c){
+        cin >> n;
+        initialize();
+        char matrix[n+1][n+1];
+        FORE(i,1, n){
+            FORE(j,1, n){
                 cin >> matrix[i][j];
             }
         }
-        int flag = 1;
-        ans = 0;
-        FOR(i,r){
-            FOR(j,c){
-                if(matrix[i][j] == 'A'){
-                    FILL(visited, 0);
-                    visited[i][j] = 1;
-                    solve(i,j,1);
-                    if(ans){
-                        cout << "YES" << endl;
-                        flag = 0;
-                        break;
-                    }
+        FORE(i,1, n){
+            FORE(j,1, n){
+                if(matrix[i][j] == 'Y'){
+                    adj[i].pb(j);
+                    adjReverse[j].pb(i);
                 }
             }
-            if(flag == 0)
-                break;
         }
-        if(flag)
-            cout << "NO" << endl;
+        for(int i = 1;i <= n; i++){
+            if(!vis[i]){
+                dfs(i);
+            }
+        }
+        FORE(i,1,n) vis[i] = false;
+        scc();
+        cout << numberOfComponents << endl;
+        //DAG of SCC is formed calculate indegree of components
     }
     return 0;
 }

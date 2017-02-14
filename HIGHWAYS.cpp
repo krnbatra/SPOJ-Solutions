@@ -40,26 +40,39 @@ void si(int &x){
     for(;c>47 && c<58;c = gc()) {x = (x<<1) + (x<<3) + c - 48;}
     if(neg) x=-x;
 }
-const int MAXN = 1e5+5;
-int n, c;
-int pos[MAXN];
 
-int isPossible(int mid){
-    //place each cow at gap of mid and see if all cows can be placed
-    //i will go till n and if the number of cows on reaching n is found to be greater than or equal to c then this is possible answer
-    int positionOfLastCow = pos[0];
-    int count = 1;
-    for(int i = 1;i < n; i++){
-        int currentPositionOfCow = pos[i];
-        if(currentPositionOfCow-positionOfLastCow >= mid){
-            count++;
-            positionOfLastCow = currentPositionOfCow;
+const int MAXN = 1e5+5;
+// int INF = 1e6;
+vector<ii> adj[MAXN];   //{dist, adjacent_vertex}
+ll dist[MAXN];
+bool vis[MAXN];
+int n, m, st, finish;
+
+void initalize(){
+    FORE(i,1,n){adj[i].clear();dist[i]=1e6;vis[i]=false;}
+}
+
+void dijkstra(){
+    dist[st] = 0;    //1 is the source vertex.
+    multiset<ii> S; //acts as min priority queue.
+    S.insert({0,st});    //{dist, vertex}.
+    while(!S.empty()){
+        ii p = *(S.begin());
+        S.erase(S.begin());
+        int currVertex = p.S;
+        int weight = p.F;
+        if(vis[currVertex])     //according to the algorithm the distance to the visited vertices is minimal.
+            continue;
+        vis[currVertex] = true;
+        for(int i = 0;i < adj[currVertex].size(); i++){
+            int adjacent_vertex = adj[currVertex][i].S;
+            int weight = adj[currVertex][i].F;
+            if(dist[currVertex] + weight < dist[adjacent_vertex]){
+                dist[adjacent_vertex] = dist[currVertex] + weight;
+                S.insert({dist[adjacent_vertex], adjacent_vertex}); //a vertex can be pushed multiple times do not mark vis as true while pushing instead mark it while popping out.
+            }
         }
     }
-    if(count >= c)
-        return 1;
-    else
-        return 0;
 }
 
 int main(){
@@ -67,18 +80,19 @@ int main(){
     int t;
     cin >> t;
     while(t--){
-        cin >> n >> c;
-        read(pos, n);
-        sort(pos, pos+n);
-        int minn = 0, maxx = pos[n-1]-pos[0]+1;
-        while(maxx - minn > 1){
-            int mid = (maxx+minn)/2;
-            if(isPossible(mid)){
-                minn = mid;
-            }else
-                maxx = mid;
+        cin >> n >> m >> st >> finish;
+        initalize();
+        FOR(i,m){
+            int a, b, w;
+            cin >> a >> b >> w;
+            adj[a].pb({w, b});
+            adj[b].pb({w, a});
         }
-        cout << minn << endl;
+        dijkstra();
+        if(dist[finish] == 1e6)
+            cout << "NONE" << endl;
+        else
+            cout << dist[finish] << endl;
     }
     return 0;
 }

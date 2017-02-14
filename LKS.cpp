@@ -3,6 +3,7 @@
 #include <limits.h>
 using namespace std;
 typedef long long ll;
+typedef unsigned long long ull;
 typedef pair<int, int> ii;
 typedef vector<ii> vii;
 typedef vector<int> vi;
@@ -10,8 +11,8 @@ typedef vector<int> vi;
 #define MOD (ll)1000000007
 #define pb   push_back
 #define EPS 1e-9
-#define FOR(i, n)  for(int i = 0;i < n; i++)
-#define FORE(i, a, b)   for(int i = a;i <= b; i++)
+#define FOR(i,n)  for(int i = 0;i < n; i++)
+#define FORE(i,a,b) for(int i = a;i <= b; i++)
 #define pi(a)   printf("%d\n", a)
 #define all(c)  c.begin(), c.end()
 #define tr(container, it)   for(typeof(container.begin()) it = container.begin(); it != container.end(); it++)
@@ -19,6 +20,8 @@ typedef vector<int> vi;
 #define sdi(a, b)   si(a);si(b)
 #define io ios_base::sync_with_stdio(false);cin.tie(NULL);
 #define endl '\n'
+#define F first
+#define S second
 
 template <typename T> T gcd(T a, T b){return (b==0)?a:gcd(b,a%b);}
 template <typename T> T lcm(T a, T b){return a*(b/gcd(a,b));}
@@ -36,38 +39,32 @@ void si(int &x){
     if(neg) x=-x;
 }
 
-vector<int> factors;
-void div(int n){
-    for(int i = 1;i*i <= n; i++){
-        // cout<<i<<endl;
-        if(n%i == 0){
-            if(i*i == n){
-                factors.pb(i);
-            }else{
-                factors.pb(i);
-                factors.pb(n/i);
-            }
-        }
+short dp[2000001][501];
+int wt[501];
+int value[501];
+
+int knapSack(int W, int n){
+    if(n == 0 || W == 0)
+        return 0;
+    if(dp[W][n] != -1)
+        return dp[W][n];
+    if(wt[n-1] > W){
+        dp[W][n] = knapSack(W, n-1);
+        return dp[W][n];
     }
+    int res = max(value[n-1] + knapSack(W-wt[n-1], n-1), knapSack(W, n-1));
+    dp[W][n] = res;
+    return res;
 }
 
 int main(){
-    // io;
-    int t;
-    si(t);
-    while(t--){
-        factors.clear();
-        int a, b;
-        sdi(a,b);
-        if(a > b)   swap(a,b);
-        int gd = gcd(a,b);
-        div(gd);
-        int count = factors.size();
-        // FOR(i, factors.size()){
-        //     if(b%factors[i]==0)
-        //         count++;
-        // }
-        pi(count);
+    io;
+    memset(dp, -1, sizeof(dp));
+    int W, n;
+    cin >> W >> n;
+    for(int i = 0; i < n; i++){
+        cin >> value[i] >> wt[i];
     }
+    cout << knapSack(W, n) << endl;
     return 0;
 }

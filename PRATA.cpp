@@ -40,26 +40,28 @@ void si(int &x){
     for(;c>47 && c<58;c = gc()) {x = (x<<1) + (x<<3) + c - 48;}
     if(neg) x=-x;
 }
-const int MAXN = 1e5+5;
-int n, c;
-int pos[MAXN];
 
-int isPossible(int mid){
-    //place each cow at gap of mid and see if all cows can be placed
-    //i will go till n and if the number of cows on reaching n is found to be greater than or equal to c then this is possible answer
-    int positionOfLastCow = pos[0];
-    int count = 1;
-    for(int i = 1;i < n; i++){
-        int currentPositionOfCow = pos[i];
-        if(currentPositionOfCow-positionOfLastCow >= mid){
+const int MAXN = 55;
+ll p;
+int cooks;
+int ranks[MAXN];
+
+bool isPossible(ll mid){
+    ll count = 0;
+    for(int i = 0;i < cooks; i++){
+        //count parathas made by ith cook in mid time
+        ll time = 0;
+        int j = 1;
+        while(1){
+            time += j*ranks[i];
+            j++;
+            if(time > mid)
+                break;
             count++;
-            positionOfLastCow = currentPositionOfCow;
         }
     }
-    if(count >= c)
-        return 1;
-    else
-        return 0;
+    // cout << mid << sp << count << endl;
+    return (count >= p);
 }
 
 int main(){
@@ -67,18 +69,30 @@ int main(){
     int t;
     cin >> t;
     while(t--){
-        cin >> n >> c;
-        read(pos, n);
-        sort(pos, pos+n);
-        int minn = 0, maxx = pos[n-1]-pos[0]+1;
-        while(maxx - minn > 1){
-            int mid = (maxx+minn)/2;
-            if(isPossible(mid)){
-                minn = mid;
-            }else
-                maxx = mid;
+        cin >> p;
+        cin >> cooks;
+        FOR(i,cooks)    cin >> ranks[i];
+        int maxx = INT_MIN;
+        FOR(i,cooks)    maxx = max(maxx, ranks[i]);
+        //find time taken by this cook
+        ll time = 0;
+        int count = 0;
+        int i = 1;
+        while(count < p){
+            time = time + i*maxx;
+            i++;
+            count++;
         }
-        cout << minn << endl;
+        // cout << time << endl;
+        ll lo = -1, hi = time;
+        while(hi-lo > 1){
+            ll mid = (lo+hi)/2;
+            if(isPossible(mid)){
+                hi = mid;
+            }else
+                lo = mid;
+        }
+        cout << hi << endl;
     }
     return 0;
 }

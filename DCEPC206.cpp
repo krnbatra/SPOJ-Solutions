@@ -10,8 +10,8 @@ typedef vector<int> vi;
 #define MOD (ll)1000000007
 #define pb   push_back
 #define EPS 1e-9
-#define FOR(i, n)  for(int i = 0;i < n; i++)
-#define FORE(i, a, b)   for(int i = a;i <= b; i++)
+#define FOR(i,n)  for(int i = 0;i < n; i++)
+#define FORE(i,a,b) for(int i = a;i <= b; i++)
 #define pi(a)   printf("%d\n", a)
 #define all(c)  c.begin(), c.end()
 #define tr(container, it)   for(typeof(container.begin()) it = container.begin(); it != container.end(); it++)
@@ -19,6 +19,11 @@ typedef vector<int> vi;
 #define sdi(a, b)   si(a);si(b)
 #define io ios_base::sync_with_stdio(false);cin.tie(NULL);
 #define endl '\n'
+#define F first
+#define S second
+#define FILL(arr, val)  memset(arr, val, sizeof(arr))
+#define read(arr, n)    for(int i = 0;i < n; i++)cin>>arr[i];
+#define sp ' '
 
 template <typename T> T gcd(T a, T b){return (b==0)?a:gcd(b,a%b);}
 template <typename T> T lcm(T a, T b){return a*(b/gcd(a,b));}
@@ -36,38 +41,54 @@ void si(int &x){
     if(neg) x=-x;
 }
 
-vector<int> factors;
-void div(int n){
-    for(int i = 1;i*i <= n; i++){
-        // cout<<i<<endl;
-        if(n%i == 0){
-            if(i*i == n){
-                factors.pb(i);
-            }else{
-                factors.pb(i);
-                factors.pb(n/i);
-            }
-        }
+const int MAXN = (int)1e6+5;
+ll arr[MAXN], BIT[MAXN];
+int size;
+
+void update(int idx, int val){
+    while(idx <= MAXN){
+        BIT[idx] += val;
+        idx += idx&-idx;
     }
 }
 
+ll query(int idx){
+    ll sum = 0;
+    while(idx > 0){
+        sum += BIT[idx];
+        idx -= idx&-idx;
+    }
+    return sum;
+}
+
+ll RMQ(int l, int r){
+    return query(r) - query(l-1);
+}
+
+// void init(){
+//     for(int i = 1;i <= MAXN; i++){
+//         BIT[i] = 0;
+//     }
+// }
+
+
 int main(){
-    // io;
+    io;
     int t;
-    si(t);
+    cin >> t;
     while(t--){
-        factors.clear();
-        int a, b;
-        sdi(a,b);
-        if(a > b)   swap(a,b);
-        int gd = gcd(a,b);
-        div(gd);
-        int count = factors.size();
-        // FOR(i, factors.size()){
-        //     if(b%factors[i]==0)
-        //         count++;
-        // }
-        pi(count);
+        // init();
+        cin >> size;
+        ll sum = 0;
+        for(int i= 1;i <= size; i++){
+            cin >> arr[i];
+            if(arr[i] > 0){
+                sum += query(arr[i]-1);
+                update(arr[i], arr[i]);
+            }
+        }
+        cout << sum << endl;
+        memset(BIT, 0, sizeof BIT);
     }
     return 0;
 }

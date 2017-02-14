@@ -10,8 +10,8 @@ typedef vector<int> vi;
 #define MOD (ll)1000000007
 #define pb   push_back
 #define EPS 1e-9
-#define FOR(i, n)  for(int i = 0;i < n; i++)
-#define FORE(i, a, b)   for(int i = a;i <= b; i++)
+#define FOR(i,n)  for(int i = 0;i < n; i++)
+#define FORE(i,a,b) for(int i = a;i <= b; i++)
 #define pi(a)   printf("%d\n", a)
 #define all(c)  c.begin(), c.end()
 #define tr(container, it)   for(typeof(container.begin()) it = container.begin(); it != container.end(); it++)
@@ -19,6 +19,11 @@ typedef vector<int> vi;
 #define sdi(a, b)   si(a);si(b)
 #define io ios_base::sync_with_stdio(false);cin.tie(NULL);
 #define endl '\n'
+#define F first
+#define S second
+#define FILL(arr, val)  memset(arr, val, sizeof(arr))
+#define read(arr, n)    for(int i = 0;i < n; i++)cin>>arr[i];
+#define sp ' '
 
 template <typename T> T gcd(T a, T b){return (b==0)?a:gcd(b,a%b);}
 template <typename T> T lcm(T a, T b){return a*(b/gcd(a,b));}
@@ -36,38 +41,36 @@ void si(int &x){
     if(neg) x=-x;
 }
 
-vector<int> factors;
-void div(int n){
-    for(int i = 1;i*i <= n; i++){
-        // cout<<i<<endl;
-        if(n%i == 0){
-            if(i*i == n){
-                factors.pb(i);
-            }else{
-                factors.pb(i);
-                factors.pb(n/i);
+const int MAXN = 1e8+5;
+int isPrime[MAXN];    //isPrime[i] = 0 indicates i is prime. 
+vector<int> primes;
+void sieve(){
+    //if even check itself while calling. This function will only tells wether a number is prime or not(not for even numbers).
+    primes.pb(2);
+    isPrime[0] = isPrime[1] = 1;
+    for(int i = 3; i <= MAXN; i+=2){
+        if(isPrime[i] == 0){
+            primes.pb(i);
+            if(i*(ll)1*i <= MAXN){
+                for(int j = i*i; j <= MAXN; j += (2*i)){
+                    isPrime[j] = 1;
+                }
             }
         }
     }
 }
 
+
+
 int main(){
-    // io;
-    int t;
-    si(t);
-    while(t--){
-        factors.clear();
-        int a, b;
-        sdi(a,b);
-        if(a > b)   swap(a,b);
-        int gd = gcd(a,b);
-        div(gd);
-        int count = factors.size();
-        // FOR(i, factors.size()){
-        //     if(b%factors[i]==0)
-        //         count++;
-        // }
-        pi(count);
+    io;
+    sieve();
+    int q;
+    cin >> q;
+    while(q--){
+        int k;
+        cin >> k;
+        cout << primes[k-1] << endl;
     }
     return 0;
 }

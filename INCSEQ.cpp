@@ -10,8 +10,8 @@ typedef vector<int> vi;
 #define MOD (ll)1000000007
 #define pb   push_back
 #define EPS 1e-9
-#define FOR(i, n)  for(int i = 0;i < n; i++)
-#define FORE(i, a, b)   for(int i = a;i <= b; i++)
+#define FOR(i,n)  for(int i = 0;i < n; i++)
+#define FORE(i,a,b) for(int i = a;i <= b; i++)
 #define pi(a)   printf("%d\n", a)
 #define all(c)  c.begin(), c.end()
 #define tr(container, it)   for(typeof(container.begin()) it = container.begin(); it != container.end(); it++)
@@ -19,6 +19,8 @@ typedef vector<int> vi;
 #define sdi(a, b)   si(a);si(b)
 #define io ios_base::sync_with_stdio(false);cin.tie(NULL);
 #define endl '\n'
+#define F first
+#define S second
 
 template <typename T> T gcd(T a, T b){return (b==0)?a:gcd(b,a%b);}
 template <typename T> T lcm(T a, T b){return a*(b/gcd(a,b));}
@@ -35,39 +37,31 @@ void si(int &x){
     for(;c>47 && c<58;c = gc()) {x = (x<<1) + (x<<3) + c - 48;}
     if(neg) x=-x;
 }
-
-vector<int> factors;
-void div(int n){
-    for(int i = 1;i*i <= n; i++){
-        // cout<<i<<endl;
-        if(n%i == 0){
-            if(i*i == n){
-                factors.pb(i);
-            }else{
-                factors.pb(i);
-                factors.pb(n/i);
-            }
+ll arr[10005];
+ll dp[10005][10005];
+ll countSub(int len, int idx){
+    if(len == 1)
+        return 1;
+    if(dp[len][idx] != -1)
+        return dp[len][idx]%5000000;
+    int res = 0;
+    for(int i = 0;i < idx; i++){
+        if(arr[i] < arr[idx]){
+            res = (res + countSub(len-1, i))%5000000;
         }
     }
+    dp[len][idx] = res;
+    return res;
 }
 
 int main(){
-    // io;
-    int t;
-    si(t);
-    while(t--){
-        factors.clear();
-        int a, b;
-        sdi(a,b);
-        if(a > b)   swap(a,b);
-        int gd = gcd(a,b);
-        div(gd);
-        int count = factors.size();
-        // FOR(i, factors.size()){
-        //     if(b%factors[i]==0)
-        //         count++;
-        // }
-        pi(count);
-    }
+    io;
+    memset(dp, -1, sizeof(dp));
+    int n;
+    cin >> n;
+    int k;
+    cin >> k;
+    FOR(i,n)    cin >> arr[i];
+    cout << countSub(k, n-1)%5000000 << endl;
     return 0;
 }
