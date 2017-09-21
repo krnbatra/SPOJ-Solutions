@@ -1,26 +1,12 @@
-/*My First Template :D*/
+/*Let's get high :D*/
 #include <bits/stdc++.h>
-#include <limits.h>
 using namespace std;
 typedef long long ll;
-typedef pair<int, int> ii;
-typedef vector<ii> vii;
-typedef vector<int> vi;
  
-#define MOD (ll)1000000007
-#define pb   push_back
-#define EPS 1e-9
-#define FOR(i,n)  for(int i = 0;i < n; i++)
-#define FORE(i,a,b) for(int i = a;i <= b; i++)
-#define pi(a)   printf("%d\n", a)
-#define all(c)  c.begin(), c.end()
-#define tr(container, it)   for(typeof(container.begin()) it = container.begin(); it != container.end(); it++)
-#define gc getchar_unlocked
-#define sdi(a, b)   si(a);si(b)
-#define io ios_base::sync_with_stdio(false);cin.tie(NULL);
-#define endl '\n'
-#define F first
-#define S second
+#define MOD                 1000000007LL
+#define EPS                 1e-9
+#define io                  ios_base::sync_with_stdio(false);cin.tie(NULL);
+#define M_PI                3.14159265358979323846
 
 template <typename T> T gcd(T a, T b){return (b==0)?a:gcd(b,a%b);}
 template <typename T> T lcm(T a, T b){return a*(b/gcd(a,b));}
@@ -28,38 +14,27 @@ template <typename T> T mod_exp(T b, T p, T m){T x = 1;while(p){if(p&1)x=(x*b)%m
 template <typename T> T invFermat(T a, T p){return mod_exp(a, p-2, p);}
 template <typename T> T exp(T b, T p){T x = 1;while(p){if(p&1)x=(x*b);b=(b*b);p=p>>1;}return x;}
 
-void si(int &x){
-    register int c = gc();
-    x = 0;
-    int neg = 0;
-    for(;((c<48 || c>57) && c != '-');c = gc());
-    if(c=='-') {neg=1;c=gc();}
-    for(;c>47 && c<58;c = gc()) {x = (x<<1) + (x<<3) + c - 48;}
-    if(neg) x=-x;
-}
+const int MAXN = 1e5+5;
+int last[MAXN];
+ll dp[MAXN];
 
 int main(){
     io;
     int t;
     cin >> t;
     while(t--){
-        string input;
-        cin >> input;
-        ll dp[input.size()+1];
-        //dp[i] represents distinct subsequences formed by first i chars of input.
-        dp[0] = 1;
-        int lastOccurence[26];
-        FOR(i,26)   lastOccurence[i]=-1;
-        for(int i = 1;i <= input.size(); i++){
-            ll repeat = 0;
-            dp[i] = (2*dp[i-1])%MOD;
-            if(lastOccurence[input[i-1]-'A'] != -1){
-                repeat = dp[lastOccurence[input[i-1]-'A']];
-            }
-            dp[i] = (dp[i]-repeat+MOD)%MOD;
-            lastOccurence[input[i-1]-'A'] = i-1;
-        }
-        cout << dp[input.size()]%MOD << endl;
+    	memset(dp, 0, sizeof dp);
+    	memset(last, -1, sizeof last);
+    	string str;
+    	cin >> str;
+    	dp[0] = 1;
+    	for(int i = 1;i <= str.size(); i++){
+    		dp[i] = (2*dp[i-1])%MOD;
+    		if(last[str[i-1]] != -1)
+    			dp[i] = (dp[i] - dp[last[str[i-1]]] + MOD) % MOD;
+    		last[str[i-1]] = i-1;
+    	}
+    	cout << dp[str.size()] << endl;
     }
     return 0;
 }

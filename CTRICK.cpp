@@ -14,24 +14,23 @@ template <typename T> T mod_exp(T b, T p, T m){T x = 1;while(p){if(p&1)x=(x*b)%m
 template <typename T> T invFermat(T a, T p){return mod_exp(a, p-2, p);}
 template <typename T> T exp(T b, T p){T x = 1;while(p){if(p&1)x=(x*b);b=(b*b);p=p>>1;}return x;}
 
-const int MAXN = 1e5+5;
-ll arr[MAXN];
-ll dp[MAXN];
+const int MAXN = 2e4+5;
+int BIT[MAXN];
 
-ll solve(int idx){
-	if(idx < 0)
-		return 0;
-	if(dp[idx] != -1)
-		return dp[idx];
-	ll ans = 0;
-	ans = max(ans, arr[idx] + solve(idx-2));
-	if(idx-1 >= 0)
-		ans = max(ans, arr[idx] + arr[idx-1] + solve(idx-4));
-	if(idx-2 >= 0)
-		ans = max(ans, arr[idx] + arr[idx-1] + arr[idx-2] + solve(idx-6));
-	// ans = max(ans, solve(idx-1));
-	dp[idx] = ans;
-	return ans;
+void update(int idx, int val){
+	while(idx <= 20000){
+		BIT[idx] += val;
+		idx += idx&-idx;
+	}
+}
+
+int query(int idx){
+	int sum = 0;
+	while(idx > 0){
+		sum += BIT[idx];
+		idx -= idx&-idx;
+	}
+	return sum;
 }
 
 int main(){
@@ -39,20 +38,33 @@ int main(){
     int t;
     cin >> t;
     while(t--){
-    	memset(dp, -1, sizeof dp);
     	int n;
     	cin >> n;
-    	for(int i = 0; i < n; i++)
-    		cin >> arr[i];
-    	int l = 0, r = n-1;
-    	while(l < r){
-    		int temp = arr[l];
-    		arr[l] = arr[r];
-    		arr[r] = temp;
-    		l++;
-    		r--;
+    	for(int i = 1;i <= n; i++)
+    		update(i, 1);
+
+    	int remaining = n;
+    	int ahead = 1;
+    	vector<int> ans(n+1);
+    	for(int i = 1;i <= n; i++){
+    		ahead = (ahead+i)%remaining;
+    		if(ahead == 0)
+    			ahead = remaining;
+    		remaining--;
+    		int lo = 0, hi = n;
+    		while(hi-lo > 1){
+    			int mid = (lo+hi) >> 1;
+    			if(query(mid) >= ahead)
+    				hi = mid;
+    			else
+    				lo = mid;
+    		}
+    		ans[hi] = i;
+    		update(hi, -1);
     	}
-    	cout << solve(n-1) << endl;
+    	for(int i = 1;i < ans.size(); i++)
+    		cout << ans[i] << " ";
+    	cout << endl;
     }
     return 0;
 }
