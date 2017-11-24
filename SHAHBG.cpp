@@ -14,42 +14,33 @@ template <typename T> T mod_exp(T b, T p, T m){T x = 1;while(p){if(p&1)x=(x*b)%m
 template <typename T> T invFermat(T a, T p){return mod_exp(a, p-2, p);}
 template <typename T> T exp(T b, T p){T x = 1;while(p){if(p&1)x=(x*b);b=(b*b);p=p>>1;}return x;}
 
-const int MAXN = 1e7+5;
-int BIT[MAXN];
-
-void update(int idx, int val){
-	while(idx <= MAXN){
-		BIT[idx] += val;
-		idx += idx&-idx;
-	}
-}
-
-ll query(int idx){
-	ll sum = 0;
-	while(idx > 0){
-		sum += (ll)BIT[idx];
-		idx -= idx&-idx;
-	}
-	return sum;
-}
-
+const int MAXN = 2e4+5;
+int vis[MAXN];
+int cnt;
 
 int main(){
     io;
-	int t;
-	cin >> t;
-	while(t--){
-		memset(BIT, 0, sizeof BIT);
-		int n;
-		cin >> n;
-		int arr[n];
-		ll ans = 0;
-		for(int i = 0;i < n; i++){
-			cin >> arr[i];
-			ans += query((int)1e7)-query(arr[i]);
-			update(arr[i], 1);
-		}
-		cout << ans << endl;
-	}    
+    int n;
+    cin >> n;
+    int arr[n];
+    for(int i = 0;i < n; i++)
+        cin >> arr[i];
+    vis[arr[0]] = 1;
+    cnt = 1;
+    cout << 1 << endl;
+    for(int i = 1;i < n; i++){
+        int curr = arr[i];
+        if(curr-1 >= 1 && vis[curr-1] == 1 && curr+1 <= 20000 && vis[curr+1] == 1){
+            cnt--;
+        }else if(curr+1 <= 20000 && vis[curr+1] == 1){
+
+        }else if(curr-1 >= 1 && vis[curr-1] == 1){
+
+        }else
+            cnt++;
+        vis[curr] = 1;
+        cout << cnt << endl;
+    }
+    cout << "Justice" << endl;
     return 0;
 }

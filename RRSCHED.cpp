@@ -14,42 +14,48 @@ template <typename T> T mod_exp(T b, T p, T m){T x = 1;while(p){if(p&1)x=(x*b)%m
 template <typename T> T invFermat(T a, T p){return mod_exp(a, p-2, p);}
 template <typename T> T exp(T b, T p){T x = 1;while(p){if(p&1)x=(x*b);b=(b*b);p=p>>1;}return x;}
 
-const int MAXN = 1e7+5;
-int BIT[MAXN];
+const int MAXN = 5e4+5;
 
-void update(int idx, int val){
-	while(idx <= MAXN){
+ll n;
+pair<int, int> table[MAXN];
+ll res[MAXN];
+ll BIT[MAXN];
+
+void update(int idx, ll val){
+	while(idx <= 50000){
 		BIT[idx] += val;
-		idx += idx&-idx;
+		idx += idx & -idx;
 	}
 }
 
 ll query(int idx){
 	ll sum = 0;
 	while(idx > 0){
-		sum += (ll)BIT[idx];
-		idx -= idx&-idx;
+		sum += BIT[idx];
+		idx -= idx & -idx;
 	}
 	return sum;
 }
 
-
 int main(){
-    io;
-	int t;
-	cin >> t;
-	while(t--){
-		memset(BIT, 0, sizeof BIT);
-		int n;
-		cin >> n;
-		int arr[n];
-		ll ans = 0;
-		for(int i = 0;i < n; i++){
-			cin >> arr[i];
-			ans += query((int)1e7)-query(arr[i]);
-			update(arr[i], 1);
-		}
-		cout << ans << endl;
-	}    
-    return 0;
+	io;
+	cin >> n;
+	for(int i = 1;i <= n; i++){
+		int x;
+		cin >> x;
+		table[i] = {x, i};
+	}
+	sort(table+1, table+n+1);
+	for(int i = 1;i <= n; i++)
+		update(i, 1);
+	ll delta, tot = 0;
+	for(int i = 1;i <= n; i++){
+		delta = table[i].first - ((i > 1) ? table[i-1].first : 0);
+		tot += (n-(i-1))*delta;
+		res[table[i].second] = tot - (n-(i-1)) + query(table[i].second);
+		update(table[i].second, -1);
+	}
+	for(int i = 1; i <= n; i++)
+		cout << res[i] << endl;
+	return 0;
 }

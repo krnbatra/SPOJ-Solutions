@@ -14,42 +14,35 @@ template <typename T> T mod_exp(T b, T p, T m){T x = 1;while(p){if(p&1)x=(x*b)%m
 template <typename T> T invFermat(T a, T p){return mod_exp(a, p-2, p);}
 template <typename T> T exp(T b, T p){T x = 1;while(p){if(p&1)x=(x*b);b=(b*b);p=p>>1;}return x;}
 
-const int MAXN = 1e7+5;
-int BIT[MAXN];
+const int MAXN = 1e6+5;
+ll fact[MAXN], invp[MAXN];
 
-void update(int idx, int val){
-	while(idx <= MAXN){
-		BIT[idx] += val;
-		idx += idx&-idx;
-	}
+void init(){
+    fact[0] = 1, invp[0] = 1;
+    for(int i = 1; i < MAXN; i++)
+        fact[i] = (fact[i-1] * i) % MOD;
+    invp[MAXN-1] = invFermat(fact[MAXN-1], MOD);
+    for(int i = MAXN-2; i >= 1; i--)
+        invp[i] = (invp[i+1] * (i+1)) % MOD;
 }
 
-ll query(int idx){
-	ll sum = 0;
-	while(idx > 0){
-		sum += (ll)BIT[idx];
-		idx -= idx&-idx;
-	}
-	return sum;
+ll nCr(int n, int r){
+    if(r < 0 || r > n)  return 0;
+    return (fact[n] * ((invp[n-r] * invp[r]) % MOD)) % MOD;
 }
-
 
 int main(){
     io;
-	int t;
-	cin >> t;
-	while(t--){
-		memset(BIT, 0, sizeof BIT);
-		int n;
-		cin >> n;
-		int arr[n];
-		ll ans = 0;
-		for(int i = 0;i < n; i++){
-			cin >> arr[i];
-			ans += query((int)1e7)-query(arr[i]);
-			update(arr[i], 1);
-		}
-		cout << ans << endl;
-	}    
+    init();
+    ll n, a, b, d;
+    while(cin >> n){
+    	cin >> a >> b >> d;
+    	ll ans1 = nCr(n, a);
+    	ll ans2 = nCr(b, d);
+    	ll ans3 = mod_exp(ans2, a, MOD);
+    	ll final_ans = ans1*ans3;
+    	final_ans %= MOD;
+    	cout << final_ans << endl;
+    }
     return 0;
 }

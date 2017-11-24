@@ -14,83 +14,81 @@ template <typename T> T mod_exp(T b, T p, T m){T x = 1;while(p){if(p&1)x=(x*b)%m
 template <typename T> T invFermat(T a, T p){return mod_exp(a, p-2, p);}
 template <typename T> T exp(T b, T p){T x = 1;while(p){if(p&1)x=(x*b);b=(b*b);p=p>>1;}return x;}
 
-const int MAXN = 3e4+5;
-int BLOCK_SIZE;
-ll arr[MAXN];
-pair<pair<int, int>, int> queries[200005];
+const int N = 3e4+5;
+const int M = 2e5+5;
+const int SQN = sqrt(N) + 1;
 
-int N, Q;
-ll cnt[1000005];
-ll curr_ans;
-ll answer[200005];
+int n, q;
 
-bool mo_cmp(pair<pair<int, int>, int> &x, pair<pair<int, int>, int> &y){
-	int block_x = x.first.first/BLOCK_SIZE;
-	int block_y = y.first.first/BLOCK_SIZE;
-	if(block_x != block_y)
-		return block_x < block_y;
-	return x.first.second < y.first.second;
-}
+struct query{
+	int l, r;
+	int idx;
+	int block;
+	query(){}
+	query(int _l, int _r, int _id){
+		l = _l;
+		r = _r;
+		idx = _id;
+		block = l/SQN;
+	}
+	bool operator < (const query &b) const{
+		if(block != b.block){
+			return block < b.block;
+		}
+		return r < b.r;
+	}
+};
 
-void add(int x){
-	cnt[x]++;
-	if(cnt[x] == 1)
-		curr_ans++;
-}
-
-void remove(int x){
-	cnt[x]--;
-	if(cnt[x] == 0)
-		curr_ans--;
-}
+int arr[N];
+query Q[M];
+int print[M];
+int cnt[1000005];
 
 int main(){
-    scanf("%d", &N);
-    BLOCK_SIZE = sqrt(N);
-    for(int i = 0;i < N; i++)
-    	scanf("%lld", &arr[i]);
-    scanf("%d", &Q);
-    for(int i = 0;i < Q; i++){
-    	scanf("%d %d", &queries[i].first.first, &queries[i].first.second);
-    	queries[i].first.first--;
-    	queries[i].first.second--;
-    	queries[i].second = i;
-    }
-    sort(queries, queries+Q, mo_cmp);
-    int mo_left = 0, mo_right = -1;
-    for(int i = 0;i < Q; i++){
-    	if (i == 0 || queries[i].first.first / BLOCK_SIZE != queries[i - 1].first.first / BLOCK_SIZE){
-			memset(cnt, 0, sizeof(cnt));
-			curr_ans = 0;
-			for (int j = queries[i].first.first; j <= queries[i].first.second; j++){
-				add(arr[j]);
-			}
-			mo_left = queries[i].first.first, mo_right = queries[i].first.second;
-			answer[queries[i].second] = curr_ans;
+	scanf("%d", &n);
+	for(int i = 1;i <= n; i++){
+		scanf("%d", arr+i);
+	}
+	cin >> q;
+	for(int i = 1;i <= q; i++){
+		int l, r;
+		scanf("%d%d", &l, &r);
+		Q[i] = query(l, r, i);
+	}
+	sort(Q+1, Q+1+q);
+	int curl = 1, curr = 0;
+	ll ans = 0;
+	for(int i = 1;i <= q; i++){
+		int l = Q[i].l;
+		int r = Q[i].r;
+		int id = Q[i].idx;
+		while(curr < r){
+			++curr;
+			cnt[arr[curr]]++;
+			if(cnt[arr[curr]] == 1)
+				ans++;
 		}
-		else{
-	    	int left = queries[i].first.first;
-	    	int right = queries[i].first.second;
-	    	while(mo_right < right){
-	    		mo_right++;
-	    		add(arr[mo_right]);
-	    	}
-	    	while(mo_right > right){
-	    		remove(arr[mo_right]);
-	    		mo_right--;
-	    	}
-	    	while(mo_left > left){
-	    		mo_left--;
-	    		add(arr[mo_left]);
-	    	}
-	    	while(mo_left < left){
-	    		remove(arr[mo_left]);
-	    		mo_left++;
-	    	}
-	    	answer[queries[i].second] = curr_ans;
-	    }
-    }
-    for(int i = 0;i < Q; i++)
-    	printf("%lld\n", answer[i]);
-    return 0;
+		while(curl > l){
+			--curl;
+			cnt[arr[curl]]++;
+			if(cnt[arr[curl]] == 1)
+				ans++;
+		}
+		while(curr > r){
+			cnt[arr[curr]]--;
+			if(cnt[arr[curr]] == 0)
+				ans--;
+			--curr;
+		}
+		while(curl < l){
+			cnt[arr[curl]]--;
+			if(cnt[arr[curl]] == 0)
+				ans--;
+			++curl;
+		}
+		print[id] = ans;
+	}
+	for(int i = 1; i <= q; i++)
+		printf("%d\n", print[i]);
+	return 0;
 }

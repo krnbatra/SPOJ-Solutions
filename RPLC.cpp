@@ -14,42 +14,39 @@ template <typename T> T mod_exp(T b, T p, T m){T x = 1;while(p){if(p&1)x=(x*b)%m
 template <typename T> T invFermat(T a, T p){return mod_exp(a, p-2, p);}
 template <typename T> T exp(T b, T p){T x = 1;while(p){if(p&1)x=(x*b);b=(b*b);p=p>>1;}return x;}
 
-const int MAXN = 1e7+5;
-int BIT[MAXN];
+const int MAXN = 1e6+5;
+int n, A[MAXN];
 
-void update(int idx, int val){
-	while(idx <= MAXN){
-		BIT[idx] += val;
-		idx += idx&-idx;
+bool is_poss(ll mid){
+	ll curr = mid;
+	for(int i = 0;i < n; i++){
+		curr += A[i];
+		if(curr <= 0)
+			return false;
 	}
+	return true;
 }
-
-ll query(int idx){
-	ll sum = 0;
-	while(idx > 0){
-		sum += (ll)BIT[idx];
-		idx -= idx&-idx;
-	}
-	return sum;
-}
-
 
 int main(){
     io;
-	int t;
-	cin >> t;
-	while(t--){
-		memset(BIT, 0, sizeof BIT);
-		int n;
-		cin >> n;
-		int arr[n];
-		ll ans = 0;
-		for(int i = 0;i < n; i++){
-			cin >> arr[i];
-			ans += query((int)1e7)-query(arr[i]);
-			update(arr[i], 1);
-		}
-		cout << ans << endl;
-	}    
+    int t;
+    cin >> t;
+    int tc = 1;
+    while(t--){
+    	cout << "Scenario #" << tc << ": ";
+    	tc++;
+    	cin >> n;
+    	for(int i = 0;i < n; i++)
+    		cin >> A[i];
+    	ll lo = 0, hi = (ll)1e13;
+    	while(hi-lo > 1){
+    		ll mid = (lo+hi)/2;
+    		if(is_poss(mid))
+    			hi = mid;
+    		else
+    			lo = mid;
+    	}
+    	cout << hi << endl;
+    }
     return 0;
 }
