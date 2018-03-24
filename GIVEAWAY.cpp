@@ -6,26 +6,27 @@ typedef long long ll;
 #define EPS                 1e-9
 #define io                  ios_base::sync_with_stdio(false);cin.tie(NULL);
 
-const int MAXN = 1e5+5;
+const int MAXN = 5e5+5;
 int a[MAXN];
-vector<int> b[320];
+vector<int> b[710];
 
 int main(){
 	io;
 	int n, q;
-	cin >> n >> q;
+	cin >> n;
 	int sqrtn = sqrt(n);
 	for(int i = 0;i < n; i++){
 		cin >> a[i];
 		b[i/sqrtn].push_back(a[i]);
 	}
+	cin >> q;
 	int numBlocks = ceil((double)n/sqrtn);
 	for(int i = 0;i < numBlocks; i++)
 		sort(b[i].begin(), b[i].end());
 	while(q--){
-		char c;
+		int c;
 		cin >> c;
-		if(c == 'M'){
+		if(c == 1){
 			int idx, newVal;
 			cin >> idx >> newVal;
 			--idx;
@@ -55,7 +56,7 @@ int main(){
 			int ans = 0;
 			if(leftBlock == rightBlock){
 				for(int i = l;i <= r; i++){
-					if(a[i] <= x)
+					if(a[i] >= x)
 						ans++;
 				}
 				cout << ans << endl;
@@ -64,15 +65,15 @@ int main(){
 					leftBlock++;
 				int i;
 				for(i = l;i < leftBlock*sqrtn; i++)
-					if(a[i] <= x)
+					if(a[i] >= x)
 						ans++;
 				while(i+sqrtn-1 <= r){
 					int bb = i/sqrtn;
-					ans += upper_bound(b[bb].begin(), b[bb].end(), x) - b[bb].begin();
+					ans += b[bb].end() - lower_bound(b[bb].begin(), b[bb].end(), x);
 					i += sqrtn;
 				}
 				while(i <= r){
-					if(a[i] <= x)
+					if(a[i] >= x)
 						ans++;
 					i++;
 				}
@@ -80,5 +81,9 @@ int main(){
 			}
 		}
 	}
+	// vector<int> temp;
+	// for(int i = 2;i<= 10; i++)
+	// 	temp.push_back(i);
+	// cout << temp.end() - lower_bound(temp.begin(), temp.end(), 2) << endl;
 	return 0;
 }
