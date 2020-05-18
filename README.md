@@ -4,5 +4,5 @@ Please refer to these solutions **only** when you have tried the problem yoursel
 <br>
 My profile link [SPOJ](https://www.spoj.com/users/karan_batra/)
 
-### Forking the repo
-- Feel free to fork the repo and create PR for newly added solutions
+### Contributions
+- Fork the repo and create PR for newly added solutions
